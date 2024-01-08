@@ -1,7 +1,6 @@
 import React from 'react'
 import Navbar from './Navbar'
-import { Button, ButtonGroup } from '@chakra-ui/react'
-import { SmartWallet, useAddress, useWallet } from '@thirdweb-dev/react'
+import { SmartWallet, useAddress, useWallet, useConnectionStatus } from '@thirdweb-dev/react'
 
 function App() {
     const address = useAddress();
@@ -9,17 +8,16 @@ function App() {
 
     return (
         <>
-            <Navbar />
             {address ? (
                 wallet instanceof SmartWallet ? (
-                    <p>{address}</p>
+                    <Navbar isConnected={"connected"} />
                 ) : (
                     <>
-                        <p>Connecting...</p>
+                        <Navbar isConnected={"connecting"} />
                     </>
                 )
             ) : (
-                <p>please signup</p>
+                <Navbar isConnected={"disconnected"} />
             )}
         </>
     )

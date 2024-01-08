@@ -17,14 +17,15 @@ import {
 } from '@chakra-ui/react'
 
 import { useState, useEffect } from 'react';
-import { embeddedWallet, smartWallet, useConnect, useEmbeddedWallet } from '@thirdweb-dev/react'
+import { embeddedWallet, smartWallet, useConnect, useEmbeddedWallet, useAddress } from '@thirdweb-dev/react'
 
-function Navbar() {
+function Navbar(props) {
     const [isOtpSent, setIsOtpSent] = useState(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { connect, sendVerificationEmail } = useEmbeddedWallet();
     const connectSmartWallet = useConnect();
-    
+    const address = useAddress();
+
     const smartWalletConfig = smartWallet(embeddedWallet(), {
         factoryAddress: "0x07fa5fFA978247D38adaF55ac1BdaF9D6c81A330",
         gasless: true,
@@ -75,17 +76,35 @@ function Navbar() {
         }
     };
 
-
+    useEffect(() => {
+        console.log(address)
+        console.log(props.isConnected)
+    }, [address]);
 
     return (
         <nav className='flex justify-between p-4'>
             <div className='text-center font-bold text-2xl'>
                 eWallet (Decentralized Cash App)
             </div>
-            <div className='flex gap-x-4'>
-                <Button colorScheme='blue' onClick={onOpen}>Sign Up</Button>
-                <Button colorScheme='blue'>Login</Button>
-            </div>
+
+            {
+                props.isConnected === "connected" ? (
+                    <div className='flex gap-x-4'>
+                        <Button colorScheme='blue'>
+                            {address.slice(0, 10)+"..."+address.slice(25,32)}
+                        </Button>
+                    </div>
+                ) : props.isConnected === "connecting" ? (
+                    <Button colorScheme='blue'>Connecting</Button>
+                ) : (
+                    <div className='flex gap-x-4'>
+                        <Button colorScheme='blue' onClick={onOpen}>
+                            Sign Up
+                        </Button>
+                        <Button colorScheme='blue'>Login</Button>
+                    </div>
+                )
+            }
 
             {/* signup modal */}
             <Modal isOpen={isOpen} onClose={onClose}>
