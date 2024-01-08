@@ -21,24 +21,24 @@ export default function Fund() {
     const { data: tokenBalance } = useBalanceForAddress(address);
 
     const sendFund = async () => {
-        if(!username || amount === 0) {
+        if (!username || amount === 0) {
             toast({
                 title: 'Enter Username and amount',
                 status: 'warning',
                 duration: 9000,
                 isClosable: true,
                 position: 'top'
-              })
+            })
             return;
         }
-        if(amount > Number(tokenBalance?.displayValue)) {
+        if (amount > Number(tokenBalance?.displayValue)) {
             toast({
                 title: 'Insufficient funds',
                 status: 'error',
                 duration: 9000,
                 isClosable: true,
                 position: 'top'
-              })
+            })
             return;
         }
 
@@ -48,7 +48,7 @@ export default function Fund() {
                 [username]
             );
 
-            if(receiverWalletAddress === "0x0000000000000000000000000000000000000000") {
+            if (receiverWalletAddress === "0x0000000000000000000000000000000000000000") {
                 alert("Username does not exist");
                 return;
             }
@@ -56,12 +56,12 @@ export default function Fund() {
             await sdk?.wallet.transfer(receiverWalletAddress, amount);
 
             toast({
-                title: 'Fund send to ' + {username},
+                title: 'Fund send to ' + { username },
                 status: 'success',
                 duration: 9000,
                 isClosable: true,
                 position: 'top'
-              })
+            })
             setUsername("");
             setAmount(0);
         } catch (err) {
