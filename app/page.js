@@ -2,6 +2,7 @@
 import App from '@/components/App'
 import { ChakraProvider } from '@chakra-ui/react'
 import { ThirdwebProvider, embeddedWallet, smartWallet } from '@thirdweb-dev/react'
+import { Sepolia } from '@thirdweb-dev/chains';
 
 const customChain = {
   chainId: 11155111,
@@ -25,7 +26,7 @@ const smartWalletConfig = {
 
 export default function Home() {
   return (
-    <ThirdwebProvider activeChain={customChain} clientId="98a7c778fd35fb7e601259268e78aff8"
+    <ThirdwebProvider activeChain={Sepolia} clientId="98a7c778fd35fb7e601259268e78aff8"
     supportedWallets={[
       smartWallet(embeddedWallet(), smartWalletConfig),
     ]}

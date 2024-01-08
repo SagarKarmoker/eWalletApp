@@ -67,10 +67,12 @@ function Navbar(props) {
                 }
             )
 
+            onClose();
             const isDeployed = await smartWallet.isDeployed();
             if (!isDeployed) {
                 await smartWallet.deploy();
             }
+
         } catch (err) {
             console.error('Error connecting or verifying:', err);
         }
@@ -99,9 +101,8 @@ function Navbar(props) {
                 ) : (
                     <div className='flex gap-x-4'>
                         <Button colorScheme='blue' onClick={onOpen}>
-                            Sign Up
+                            Sign Up/Login
                         </Button>
-                        <Button colorScheme='blue'>Login</Button>
                     </div>
                 )
             }
