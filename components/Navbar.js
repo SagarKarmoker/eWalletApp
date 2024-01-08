@@ -14,10 +14,18 @@ import {
     FormLabel,
     FormErrorMessage,
     FormHelperText,
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    MenuItemOption,
+    MenuGroup,
+    MenuOptionGroup,
+    MenuDivider,
 } from '@chakra-ui/react'
 
 import { useState, useEffect } from 'react';
-import { embeddedWallet, smartWallet, useConnect, useEmbeddedWallet, useAddress } from '@thirdweb-dev/react'
+import { embeddedWallet, smartWallet, useConnect, useEmbeddedWallet, useAddress, useDisconnect } from '@thirdweb-dev/react'
 
 function Navbar(props) {
     const [isOtpSent, setIsOtpSent] = useState(false);
@@ -25,6 +33,7 @@ function Navbar(props) {
     const { connect, sendVerificationEmail } = useEmbeddedWallet();
     const connectSmartWallet = useConnect();
     const address = useAddress();
+    const disconnect = useDisconnect();
 
     const smartWalletConfig = smartWallet(embeddedWallet(), {
         factoryAddress: "0x07fa5fFA978247D38adaF55ac1BdaF9D6c81A330",
@@ -92,9 +101,20 @@ function Navbar(props) {
             {
                 props.isConnected === "connected" ? (
                     <div className='flex gap-x-4'>
-                        <Button colorScheme='blue'>
-                            {address.slice(0, 10)+"..."+address.slice(25,32)}
-                        </Button>
+                        {/* <Button colorScheme='blue'>
+                            {address.slice(0, 10) + "..." + address.slice(25, 32)}
+                        </Button> */}
+                        <Menu>
+                            <MenuButton as={Button} rightIcon={">>"}
+                                colorScheme='blue'>
+                                {address.slice(0, 10) + "..." + address.slice(25, 32)}
+                            </MenuButton>
+                            <MenuList>
+                                <MenuItem onClick={async () => {
+                                    await disconnect();
+                                }}>Logout</MenuItem>
+                            </MenuList>
+                        </Menu>
                     </div>
                 ) : props.isConnected === "connecting" ? (
                     <Button colorScheme='blue'>Connecting</Button>
