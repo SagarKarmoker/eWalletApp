@@ -17,20 +17,65 @@ import {
 } from '@chakra-ui/react'
 
 import { useState, useEffect } from 'react';
+import { embeddedWallet, smartWallet, useConnect, useEmbeddedWallet } from '@thirdweb-dev/react'
 
 function Navbar() {
     const [isOtpSent, setIsOtpSent] = useState(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
-
-    const handleRightBtn = () => {
-        setIsOtpSent(true);
-    }
-
-    const handleVerify = () => {
-        console.log("verified")
-    }
-
+    const { connect, sendVerificationEmail } = useEmbeddedWallet();
+    const connectSmartWallet = useConnect();
     
+    const smartWalletConfig = smartWallet(embeddedWallet(), {
+        factoryAddress: "0x07fa5fFA978247D38adaF55ac1BdaF9D6c81A330",
+        gasless: true,
+    });
+
+    const [email, setEmail] = useState('');
+    const [otp, setOTP] = useState('');
+
+    const handleRightBtn = async () => {
+        try {
+            await sendVerificationEmail({ email });
+            setIsOtpSent(true);
+        } catch (error) {
+            console.error('Error sending verification email:', error);
+        }
+    };
+
+    const handleVerify = async () => {
+        try {
+            if (!email || !otp) {
+                alert("Please enter a verification code");
+                return;
+            }
+
+            const verificationCode = otp;
+            const personalWallet = await connect({
+                strategy: "email_verification",
+                email,
+                verificationCode
+            });
+
+            console.log(personalWallet)
+
+            const smartWallet = await connectSmartWallet(
+                smartWalletConfig,
+                {
+                    personalWallet: personalWallet,
+                    chainId: 11155111,
+                }
+            )
+
+            const isDeployed = await smartWallet.isDeployed();
+            if (!isDeployed) {
+                await smartWallet.deploy();
+            }
+        } catch (err) {
+            console.error('Error connecting or verifying:', err);
+        }
+    };
+
+
 
     return (
         <nav className='flex justify-between p-4'>
@@ -53,11 +98,13 @@ function Navbar() {
                             <FormLabel>Email address</FormLabel>
                             <Input type='email' placeholder='alice@example.com'
                                 isDisabled={isOtpSent ? true : false}
-                                isRequired={true} />
+                                isRequired={true}
+                                onChange={(e) => { setEmail(e.target.value) }} />
                             <FormHelperText>We will send you an OTP</FormHelperText>
                             <FormLabel className='pt-2'>OTP</FormLabel>
                             <Input type='otp' placeholder='123456'
-                                isDisabled={isOtpSent ? false : true} />
+                                isDisabled={isOtpSent ? false : true}
+                                onChange={(e) => { setOTP(e.target.value) }} />
                         </FormControl>
                     </ModalBody>
 

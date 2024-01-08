@@ -5,7 +5,7 @@ import { ThirdwebProvider, embeddedWallet, smartWallet } from '@thirdweb-dev/rea
 
 const customChain = {
   chainId: 11155111,
-  rpc: ["https://sepolia.infura.io/v3/"],
+  rpc: ["https://sepolia.infura.io/v3/617a4f657e544795a8bf777ca806f798"],
   nativeCurrency: {
     decimals: 18,
     name: "Sepolia ETH",
@@ -26,7 +26,9 @@ const smartWalletConfig = {
 export default function Home() {
   return (
     <ThirdwebProvider activeChain={customChain} clientId="98a7c778fd35fb7e601259268e78aff8"
-    supportedWallets={[smartWallet(embeddedWallet(), smartWalletConfig)]}
+    supportedWallets={[
+      smartWallet(embeddedWallet(), smartWalletConfig),
+    ]}
     >
       <ChakraProvider>
         <App />
